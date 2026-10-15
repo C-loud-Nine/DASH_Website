@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DASH: Dual-Branch Score Distillation (WACV 2027)</title>
+<meta name="description" content="DASH supervises both classifier-free guidance branches of a compressed diffusion student and preserves the teacher's guidance gap at 5.9× compression. WACV 2027, Algorithms Track.">
+<link rel="canonical" href="https://c-loud-nine.github.io/DASH/">
+<meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e0f14" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="DASH: Dual-Branch Score Distillation for Guidance-Calibrated Compact Diffusion Models">
+<meta property="og:description" content="Supervising both CFG branches keeps a 5.9× compressed diffusion student's guidance gap calibrated to its teacher. WACV 2027.">
+<meta property="og:url" content="https://c-loud-nine.github.io/DASH/">
+<meta property="og:image" content="https://c-loud-nine.github.io/DASH/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="DASH project card: title, authors and the conditional, unconditional and guidance-gap colour motif.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DASH: Dual-Branch Score Distillation (WACV 2027)">
+<meta name="twitter:description" content="Supervising both CFG branches keeps a 5.9× compressed diffusion student's guidance gap calibrated to its teacher.">
+<meta name="twitter:image" content="https://c-loud-nine.github.io/DASH/assets/img/og.png">
+
+<!-- Google Scholar -->
+<meta name="citation_title" content="DASH: Dual-Branch Score Distillation for Guidance-Calibrated Compact Diffusion Models">
+<meta name="citation_author" content="Shafi, Abdullah Al">
+<meta name="citation_author" content="Alam, Kazi Saeed">
+<meta name="citation_author" content="Hossain, Sk Imran">
+<meta name="citation_author" content="Mephu Nguifo, Engelbert">
+<meta name="citation_conference_title" content="IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)">
+<meta name="citation_publication_date" content="2027">
+<!-- TODO: switch citation_pdf_url to the CVF Open Access PDF once published. -->
+<meta name="citation_pdf_url" content="https://arxiv.org/pdf/2606.00798">
+<meta name="citation_arxiv_id" content="2606.00798">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+<link rel="preload" href="assets/fonts/SourceSerif4-500-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/SourceSerif4-500-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+<script>
+  // Apply the saved theme before first paint (no flash). Storage may be unavailable.
+  (function () {
+    try { var t = localStorage.getItem('dash-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  })();
+</script>
+<script src="assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="top-nav">
+  <div class="nav__progress" aria-hidden="true"><span id="progress"></span></div>
+  <div class="nav__inner">
+    <a class="nav__brand" href="#top" aria-label="DASH, back to top">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><use href="#mark"/></svg>
+      <span>DASH</span>
+    </a>
+    <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links">
+      <span class="sr-only">Menu</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <nav aria-label="Sections">
+      <ul class="nav__links" id="nav-links">
+        <li><a href="#tldr">Overview</a></li>
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#samples">Samples</a></li>
+        <li><a href="#ablation">Ablation</a></li>
+        <li><a href="#bibtex">Cite</a></li>
+      </ul>
+    </nav>
+    <button class="theme-btn" id="theme-btn" type="button" aria-label="Toggle dark mode">
+      <svg class="i-sun" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg class="i-moon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- Shared SVG symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-sig" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="var(--cond)"/><stop offset=".5" stop-color="var(--gap)"/><stop offset="1" stop-color="var(--uncond)"/>
+    </linearGradient>
+  </defs>
+  <symbol id="mark" viewBox="0 0 32 32">
+    <path d="M4 26 C 12 26, 14 6, 28 6" fill="none" stroke="var(--cond)" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M4 26 C 14 26, 18 18, 28 18" fill="none" stroke="var(--uncond)" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M28 8.5 V 15.5" stroke="var(--gap)" stroke-width="3.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-paper" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6z M14 2v5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h7M9 16h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-arxiv" viewBox="0 0 24 24"><path d="M5 4l14 16M19 4L5 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></symbol>
+  <symbol id="i-quote" viewBox="0 0 24 24"><path d="M4 18c0-6 2-9 6-10M14 18c0-6 2-9 6-10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="7" cy="16" r="2.4" fill="currentColor"/><circle cx="17" cy="16" r="2.4" fill="currentColor"/></symbol>
+</svg>
+
+<main id="main">
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" id="top" aria-labelledby="title">
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="wrap hero__inner">
+    <p class="venue"><span class="venue__dot" aria-hidden="true"></span>WACV 2027 · Algorithms Track</p>
+    <h1 id="title" class="hero__title"><span class="brand-word">DASH</span>: Dual-Branch Score Distillation for Guidance-Calibrated Compact Diffusion Models</h1>
+
+    <ul class="authors" aria-label="Authors">
+      <li><a href="https://c-loud-nine.github.io">Abdullah Al Shafi</a><sup>1</sup></li>
+      <!-- TODO: add homepage URL for Kazi Saeed Alam -->
+      <li><span>Kazi Saeed Alam</span><sup>1</sup></li>
+      <!-- TODO: add homepage URL for Sk Imran Hossain -->
+      <li><span>Sk Imran Hossain</span><sup>1</sup></li>
+      <!-- TODO: add homepage URL for Engelbert Mephu Nguifo -->
+      <li><span>Engelbert Mephu Nguifo</span><sup>2</sup></li>
+    </ul>
+    <ul class="affils">
+      <li><sup>1</sup>Khulna University of Engineering &amp; Technology (KUET), Department of Computer Science and Engineering, Bangladesh</li>
+      <li><sup>2</sup>Université Clermont Auvergne, France</li>
+    </ul>
+
+    <ul class="pills" aria-label="Resources">
+      <!-- TODO: point "Paper" at the CVF Open Access page once published (currently the arXiv PDF). -->
+      <li><a class="pill" href="https://arxiv.org/pdf/2606.00798"><svg aria-hidden="true"><use href="#i-paper"/></svg>Paper</a></li>
+      <li><a class="pill" href="https://arxiv.org/abs/2606.00798"><svg aria-hidden="true"><use href="#i-arxiv"/></svg>arXiv</a></li>
+      <li><a class="pill" href="https://github.com/C-loud-Nine/DASH_Dual-Branch-Score-Distillation"><svg aria-hidden="true"><use href="#i-code"/></svg>Code</a></li>
+      <li data-video-only hidden><a class="pill" href="#video"><svg aria-hidden="true"><use href="#i-video"/></svg>Video</a></li>
+      <li><a class="pill pill--ghost" href="#bibtex"><svg aria-hidden="true"><use href="#i-quote"/></svg>BibTeX</a></li>
+    </ul>
+
+    <figure class="teaser">
+      <ol class="teaser__classes" aria-hidden="true"><li>Aeroplane</li><li>Bird</li><li>Ambulance</li><li>Bedroom</li><li>Dog</li><li>Orange</li><li>Sports car</li><li>Tiger</li><li>Turtle</li><li>Van</li></ol>
+      <div class="teaser__row">
+        <picture>
+            <source type="image/avif" srcset="assets/img/teaser-in64-teacher-1290.avif 1290w, assets/img/teaser-in64-teacher.avif 2580w" sizes="(max-width: 1100px) 100vw, 1000px">
+            <source type="image/webp" srcset="assets/img/teaser-in64-teacher-1290.webp 1290w, assets/img/teaser-in64-teacher.webp 2580w" sizes="(max-width: 1100px) 100vw, 1000px">
+            <img src="assets/img/teaser-in64-teacher-1290.png" width="2580" height="258" decoding="async" alt="ImageNet-64 teacher samples, one per class: aeroplane, bird, ambulance, bedroom, dog, orange, sports car, tiger, turtle, van.">
+          </picture>
+        <p class="teaser__lbl"><b>Teacher</b> <span data-k="headline.in64_teacher_params">116.5M</span> params · FID <span data-k="t2.Teacher (116.5M).fid">6.34</span></p>
+      </div>
+      <div class="teaser__row teaser__row--ours">
+        <picture>
+            <source type="image/avif" srcset="assets/img/teaser-in64-student-1290.avif 1290w, assets/img/teaser-in64-student.avif 2580w" sizes="(max-width: 1100px) 100vw, 1000px">
+            <source type="image/webp" srcset="assets/img/teaser-in64-student-1290.webp 1290w, assets/img/teaser-in64-student.webp 2580w" sizes="(max-width: 1100px) 100vw, 1000px">
+            <img src="assets/img/teaser-in64-student-1290.png" width="2580" height="258" decoding="async" alt="DASH student samples for the same ten ImageNet-64 classes.">
+          </picture>
+        <p class="teaser__lbl"><b>DASH student</b> <span data-k="headline.in64_student_params">22.3M</span> params · FID <span data-k="t2.DASH (22.3M).fid">9.10</span></p>
+      </div>
+      <figcaption>Class-conditional ImageNet-64, one sample per class from each model<span class="teaser__classes-inline"> (aeroplane, bird, ambulance, bedroom, dog, orange, sports car, tiger, turtle, van)</span> (first row of Supp. Fig. E7; 50-step DDIM, TAG). The student is <span data-k="headline.in64_compression" data-suffix="×">5.2×</span> smaller than its teacher.</figcaption>
+    </figure>
+
+    <p class="hero__lede">Distilling only the guided (CFG) output of a diffusion teacher leaves a compressed student's conditional and unconditional branches non-identifiable in output space, which permits guidance collapse. <strong>DASH supervises both branches directly</strong> and preserves the teacher's guidance gap at 5.9× compression.</p>
+
+    <dl class="stats" aria-label="Headline results">
+      <div class="stat">
+        <dt>Compression</dt>
+        <dd><span class="stat__num" data-k="headline.compression" data-suffix="×">5.9×</span></dd>
+        <dd class="stat__note"><span data-k="headline.teacher_params">35.8M</span> → <span data-k="headline.student_params">6.1M</span> params, CIFAR</dd>
+      </div>
+      <div class="stat">
+        <dt>CIFAR-10 FID</dt>
+        <dd><span class="stat__num" data-k="t1.DASH (ours).c10_fid">8.87</span></dd>
+        <dd class="stat__note">teacher <span data-k="t1.DASH-Teacher.c10_fid">5.47</span> · CIFAR-100 <span data-k="t1.DASH (ours).c100_fid">10.47</span> vs <span data-k="t1.DASH-Teacher.c100_fid">6.80</span></dd>
+      </div>
+      <div class="stat">
+        <dt>Gap magnitude ρ</dt>
+        <dd><span class="stat__num" data-k="t1.DASH (ours).rho_c10">0.91</span></dd>
+        <dd class="stat__note">C100 <span data-k="t1.DASH (ours).rho_c100">0.89</span> · direction cos(Δ) <span data-k="t1.DASH (ours).cos_c10">0.94</span> / <span data-k="t1.DASH (ours).cos_c100">0.93</span></dd>
+      </div>
+      <div class="stat">
+        <dt>ImageNet-64 FID</dt>
+        <dd><span class="stat__num" data-k="t2.DASH (22.3M).fid">9.10</span></dd>
+        <dd class="stat__note">composite <span data-k="t2.Composite.fid">18.43</span> · <span data-k="headline.in64_teacher_params">116.5M</span> → <span data-k="headline.in64_student_params">22.3M</span> (<span data-k="headline.in64_compression" data-suffix="×">5.2×</span>)</dd>
+      </div>
+      <div class="stat">
+        <dt>Throughput</dt>
+        <dd><span class="stat__num" data-k="eff.throughput_gain" data-suffix="×">3.62×</span></dd>
+        <dd class="stat__note"><span data-k="eff.flops_reduction" data-suffix="×">5.77×</span> fewer FLOPs · one T4, batch 64</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ VIDEO ============================ -->
+<!-- TODO: the overview video is not in the repo yet. Encode it with tools/encode_video.sh, then remove
+     the `hidden` attribute here and on the hero pill marked data-video-only. -->
+<section class="band band--video" id="video" aria-labelledby="video-h" hidden>
+  <div class="wrap">
+    <h2 id="video-h" class="sr-only">Overview video</h2>
+    <div class="video" id="video-box"></div>
+    <!-- The player is inserted from this template only when the section is not hidden, so no media is fetched until then. -->
+    <template id="video-tpl">
+      <video controls preload="metadata" playsinline poster="assets/video/dash_overview_poster.jpg" width="1920" height="1080">
+        <source src="assets/video/dash_overview.webm" type="video/webm">
+        <source src="assets/video/dash_overview.mp4" type="video/mp4">
+        Your browser cannot play this video. <a href="assets/video/dash_overview.mp4">Download the MP4</a>.
+      </video>
+    </template>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TL;DR ============================ -->
+<section class="section" id="tldr" aria-labelledby="tldr-h">
+  <div class="wrap">
+    <p class="eyebrow">TL;DR</p>
+    <h2 id="tldr-h" class="h2">One constraint cannot pin down two branches.</h2>
+    <div class="cards3">
+      <article class="card reveal" style="--k: var(--uncond)">
+        <p class="card__k">The problem</p>
+        <h3>One constraint, two branches</h3>
+        <p>Classifier-free guidance combines a conditional and an unconditional prediction. Distilling only their guided combination gives one equation per input for two unknown branch outputs, so a compressed student can drift along a line of equally good solutions, including one where the guidance gap vanishes.</p>
+      </article>
+      <article class="card reveal" style="--k: var(--cond)">
+        <p class="card__k">The fix</p>
+        <h3>Supervise both branches</h3>
+        <p>DASH matches the student's conditional output to the teacher's conditional output and its unconditional output to the teacher's unconditional output, plus a light anchor to ground-truth noise. Each branch then has a unique target per input.</p>
+      </article>
+      <article class="card reveal" style="--k: var(--gap)">
+        <p class="card__k">The evidence</p>
+        <h3>The null line, measured</h3>
+        <p>The analysis predicts that a composite student's branch errors keep the ratio (w−1)/w = <span data-k="null.predicted_ratio">0.75</span> at w = 4. Measured: <span data-k="null.CIFAR-10.measured_ratio">0.77</span>, <span data-k="null.CIFAR-100.measured_ratio">0.73</span> and <span data-k="null.ImageNet-64.measured_ratio">0.79</span> on CIFAR-10, CIFAR-100 and ImageNet-64.</p>
+      </article>
+    </div>
+    <p class="defn reveal"><strong>Calibration</strong> on this page means <em>teacher-relative guidance-gap preservation</em>: how well the student's gap <span class="tm" data-tex="\Delta_S = \varepsilon^{y}_{S} - \varepsilon^{\varnothing}_{S}">Δ<sub>S</sub> = ε<sup>y</sup><sub>S</sub> − ε<sup>∅</sup><sub>S</sub></span> reproduces the teacher's gap <span class="tm" data-tex="\Delta_T">Δ<sub>T</sub></span>, measured by its magnitude ratio <span class="tm" data-tex="\rho = \mathbb{E}\lVert\Delta_S\rVert \,/\, \mathbb{E}\lVert\Delta_T\rVert">ρ = E‖Δ<sub>S</sub>‖ / E‖Δ<sub>T</sub>‖</span> and its direction cos(Δ). Both are needed: a gap can have the right size and point the wrong way.</p>
+  </div>
+</section>
+
+<!-- ============================ ABSTRACT ============================ -->
+<section class="section section--tint" id="abstract" aria-labelledby="abs-h">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow">Abstract</p>
+    <h2 id="abs-h" class="sr-only">Abstract</h2>
+    <!-- TODO: replace with the camera-ready abstract, verbatim. This is the submitted / arXiv v2 abstract,
+         which still uses the word "curriculum" for TIRT. -->
+    <div class="abstract" id="abstract-text">
+      <p>Parameter compression of class-conditional diffusion models exposes a structural limitation in output-level distillation: supervising only the guided output leaves the two score branches non-identifiable, so the classifier-free guidance gap is not determined in the student. The zero-loss set admits degenerate solutions in which both branches collapse toward identical predictions, and guidance loses its effect at inference despite low training loss. For each fixed input the objective is exactly flat in a branch-output direction at every residual value, so the ambiguity is a property of the output-level objective rather than a poor local minimum. This paper introduces DASH, which supervises the conditional and unconditional branches independently. An anchor term regularises the conditional prediction toward ground-truth noise, and the teacher's final learned per-timestep curriculum transfers into the student as a frozen prior. Across CIFAR-10, CIFAR-100, and class-conditional ImageNet-64, a more than 5× compressed student stays within four FID points of its teacher and recovers at least 89% of the teacher's guidance-gap magnitude, where no other two-branch baseline with defined calibration exceeds 82%. Ablation isolates unconditional supervision as the term that separates this formulation from output-level distillation. The account is quantitative: the null space fixes the ratio between a composite student's two branch errors, and the measured ratios approximately match that prediction on all three datasets.</p>
+    </div>
+    <button class="linkbtn" id="abstract-more" type="button" aria-expanded="false" aria-controls="abstract-text">Read full abstract</button>
+  </div>
+</section>
+
+<!-- ============================ PROBLEM / EXPLORER ============================ -->
+<section class="section" id="problem" aria-labelledby="problem-h">
+  <div class="wrap">
+    <p class="eyebrow">The problem</p>
+    <h2 id="problem-h" class="h2">Composite distillation cannot tell recovery from collapse.</h2>
+    <div class="prose">
+      <p>A guided teacher predicts <span class="tm" data-tex="\tilde\varepsilon_T = \varepsilon^{\varnothing}_T + w\,(\varepsilon^{y}_T - \varepsilon^{\varnothing}_T)">ε̃<sub>T</sub> = ε<sup>∅</sup><sub>T</sub> + w(ε<sup>y</sup><sub>T</sub> − ε<sup>∅</sup><sub>T</sub>)</span>. Composite distillation (here, a two-branch adaptation of guided distillation, Meng et al., CVPR 2023) trains the student to match that single guided output. Writing the branch residuals as <span class="tm" data-tex="\delta^{y} = \varepsilon^{y}_S - \varepsilon^{y}_T">δ<sup>y</sup> = ε<sup>y</sup><sub>S</sub> − ε<sup>y</sup><sub>T</sub></span> and <span class="tm" data-tex="\delta^{\varnothing} = \varepsilon^{\varnothing}_S - \varepsilon^{\varnothing}_T">δ<sup>∅</sup> = ε<sup>∅</sup><sub>S</sub> − ε<sup>∅</sup><sub>T</sub></span>, the composite loss is zero whenever</p>
+      <div class="eq eq--plain" data-tex="w\,\delta^{y} + (1-w)\,\delta^{\varnothing} = 0"></div>
+      <p>That is a line, not a point. It contains ideal recovery (<span class="tm" data-tex="\delta^{y} = \delta^{\varnothing} = 0">δ<sup>y</sup> = δ<sup>∅</sup> = 0</span>) and guidance collapse (<span class="tm" data-tex="\varepsilon^{y}_S = \varepsilon^{\varnothing}_S">ε<sup>y</sup><sub>S</sub> = ε<sup>∅</sup><sub>S</sub></span>), and composite supervision gives them the same loss. The ambiguity holds at every residual value, so it does not depend on reaching zero loss. It is a statement about the emitted branch outputs at a fixed input, not about the shared network parameters.</p>
+    </div>
+
+    <figure class="explorer reveal" id="explorer" aria-labelledby="explorer-cap">
+      <div class="explorer__plot">
+        <svg id="ex-svg" viewBox="0 0 520 420" role="img" aria-labelledby="ex-title ex-desc">
+          <title id="ex-title">Residual plane of the composite loss</title>
+          <desc id="ex-desc">Horizontal axis: unconditional residual δ∅ along the teacher gap, in units of the teacher gap norm. Vertical axis: conditional residual δy in the same units. The zero-loss line passes through the origin with slope (w−1)/w. A movable point shows a student a fraction f of the way from ideal recovery to collapse.</desc>
+        </svg>
+      </div>
+      <div class="explorer__panel">
+        <div class="ctl">
+          <label for="ex-f"><span>Drift toward collapse, <i>f</i></span> <output id="ex-f-out" for="ex-f">0.00</output></label>
+          <input type="range" id="ex-f" min="0" max="1" step="0.01" value="0" aria-describedby="ex-f-help">
+          <p class="ctl__help" id="ex-f-help">0 = ideal recovery, 1 = collapse.</p>
+          <div class="fstrip" id="ex-fstrip" aria-hidden="true"></div>
+        </div>
+        <div class="ctl">
+          <label for="ex-w"><span>Guidance weight, <i>w</i></span> <output id="ex-w-out" for="ex-w">4.0</output></label>
+          <input type="range" id="ex-w" min="1.5" max="6" step="0.1" value="4">
+          <p class="ctl__help">The paper's composite baseline uses w = <span data-k="null.w">4.0</span>. Measured students are shown only at that value.</p>
+        </div>
+        <dl class="readouts" aria-live="polite">
+          <div><dt>Composite loss <span class="muted small">(everywhere on the line)</span></dt><dd>0</dd></div>
+          <div><dt>Residual ratio ‖δ<sup>y</sup>‖ / ‖δ<sup>∅</sup>‖</dt><dd id="ro-ratio">0.75</dd></div>
+          <div><dt>Gap magnitude ρ = 1 − f</dt><dd id="ro-rho">1.00</dd></div>
+          <div class="gapbars">
+            <dt>Guidance gap</dt>
+            <dd>
+              <span class="gapbar"><span class="gapbar__lbl">Teacher Δ<sub>T</sub></span><span class="gapbar__track"><span class="gapbar__fill gapbar__fill--t" style="width:100%"></span></span></span>
+              <span class="gapbar"><span class="gapbar__lbl">Student Δ<sub>S</sub></span><span class="gapbar__track"><span class="gapbar__fill" id="ro-gap" style="width:100%"></span></span></span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <figcaption id="explorer-cap" class="cap">An output-space, per-input picture (main paper §3.4.1 and Supp. §C.1). A student a fraction <i>f</i> toward collapse has <span class="tm" data-tex="\delta^{\varnothing} = f\,w\,\Delta_T">δ<sup>∅</sup> = f·w·Δ<sub>T</sub></span> and <span class="tm" data-tex="\Delta_S = (1-f)\,\Delta_T">Δ<sub>S</sub> = (1 − f)Δ<sub>T</sub></span>, so ρ = 1 − f on the line. Measured composite students sit at f = <span data-k="null.CIFAR-10.f_toward_collapse">0.34</span> / <span data-k="null.CIFAR-100.f_toward_collapse">0.38</span> / <span data-k="null.ImageNet-64.f_toward_collapse">0.40</span> (CIFAR-10 / CIFAR-100 / ImageNet-64). DASH is not a composite student, so it is not constrained to this line: it targets the origin directly, and reaches ρ = <span data-k="t1.DASH (ours).rho_c10">0.91</span> (1 − ρ = <span data-k="d.dash_1mrho">0.09</span>) on CIFAR-10.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================ METHOD ============================ -->
+<section class="section section--tint" id="method" aria-labelledby="method-h">
+  <div class="wrap">
+    <p class="eyebrow">Method</p>
+    <h2 id="method-h" class="h2">Give each branch its own target.</h2>
+
+    <figure class="diagram reveal" id="pipeline" aria-labelledby="pipe-cap">
+      <div class="diagram__bar">
+        <div class="seg" role="group" aria-label="What the diagram shows">
+          <button type="button" class="seg__btn" aria-pressed="true" data-flow="fwd">Forward pass</button>
+          <button type="button" class="seg__btn" aria-pressed="false" data-flow="bwd">Training signal</button>
+        </div>
+        <p class="diagram__hint small muted" id="pipe-hint">Hover or focus a loss to see which branches it connects.</p>
+      </div>
+      <div class="diagram__scroll" tabindex="0" role="region" aria-label="DASH training pipeline diagram; scroll sideways on small screens">
+        <div id="pipe-svg" class="diagram__canvas"></div>
+      </div>
+      <figcaption class="cap" id="pipe-cap"><b>Figure 1.</b> DASH distillation pipeline. The frozen teacher (35.8M) and the trainable student (6.1M) each run two forward passes per sample. L<sub>im</sub> and L<sub>un</sub> supervise the conditional and unconditional branches; L<sub>an</sub> anchors the student to the true noise ε. TIRT Transfer (gold) copies the teacher's learned timestep weights ω̂<sup>T</sup>, frozen. At inference only the student is kept.</figcaption>
+      <details class="paperfig">
+        <summary>View the paper's Figure 1</summary>
+        <div class="fig fig--paper">
+      <picture>
+        <source type="image/avif" srcset="assets/img/fig1-pipeline-960.avif 960w, assets/img/fig1-pipeline-1600.avif 1600w, assets/img/fig1-pipeline.avif 1890w" sizes="(max-width: 1100px) 100vw, 1060px">
+        <source type="image/webp" srcset="assets/img/fig1-pipeline-960.webp 960w, assets/img/fig1-pipeline-1600.webp 1600w, assets/img/fig1-pipeline.webp 1890w" sizes="(max-width: 1100px) 100vw, 1060px">
+        <img src="assets/img/fig1-pipeline-960.png" width="1890" height="812" loading="lazy" decoding="async"
+             alt="DASH training pipeline. A clean image is noised and passed to a frozen 35.8M teacher and a trainable 6.1M student. Each model runs two forward passes, one with the class label and one with the null token, producing conditional and unconditional predictions. The imitation loss matches the two conditional predictions, the unconditional loss matches the two unconditional predictions, and an anchor loss pulls the student's conditional prediction toward the ground-truth noise. A gold arrow copies the teacher's learned timestep weights into the student, frozen. The guidance-gap ratio rho compares the student's and teacher's gaps.">
+      </picture>
+        </div>
+      </details>
+    </figure>
+
+    <div class="method-grid">
+      <div class="eqs reveal">
+        <h3 class="h3">Dual-branch objective</h3>
+        <p>For a sample <span class="tm" data-tex="(x_0, y, t)">(x<sub>0</sub>, y, t)</span> with noised input <span class="tm" data-tex="x_t">x<sub>t</sub></span> and noise ε, the frozen teacher gives <span class="tm" data-tex="\varepsilon^{y}_T">ε<sup>y</sup><sub>T</sub></span> and <span class="tm" data-tex="\varepsilon^{\varnothing}_T">ε<sup>∅</sup><sub>T</sub></span>; the student gives <span class="tm" data-tex="\varepsilon^{y}_S">ε<sup>y</sup><sub>S</sub></span> (forced label) and <span class="tm" data-tex="\varepsilon^{\varnothing}_S">ε<sup>∅</sup><sub>S</sub></span> (null token).</p>
+        <div class="eq" data-tex="\mathcal{L}_{\mathrm{im}} = \mathbb{E}\big[\hat\omega_t\,\lVert \varepsilon^{y}_{S}-\varepsilon^{y}_{T}\rVert^2\big]" data-tag="5"></div>
+        <div class="eq" data-tex="\mathcal{L}_{\mathrm{un}} = \mathbb{E}\big[\hat\omega_t\,\lVert \varepsilon^{\varnothing}_{S}-\varepsilon^{\varnothing}_{T}\rVert^2\big]" data-tag="6"></div>
+        <div class="eq" data-tex="\mathcal{L}_{\mathrm{an}} = \mathbb{E}\big[\hat\omega_t\,\lVert \varepsilon^{y}_{S}-\varepsilon\rVert^2\big]" data-tag="7"></div>
+        <div class="eq eq--main" data-tex="\mathcal{L}_{\mathrm{DASH}} = \mathcal{L}_{\mathrm{im}} + \mathcal{L}_{\mathrm{un}} + \lambda_{\mathrm{an}}\,\mathcal{L}_{\mathrm{an}}" data-tag="8"></div>
+        <p class="small">Here <span class="tm" data-tex="\lambda_{\mathrm{an}} = 0.1">λ<sub>an</sub> = 0.1</span>, and ε is the ground-truth noise used to corrupt <span class="tm" data-tex="x_0">x<sub>0</sub></span>, not a teacher prediction. Branch weights are symmetric <span class="tm" data-tex="(\lambda_{\mathrm{im}} = \lambda_{\mathrm{un}} = 1)">(λ<sub>im</sub> = λ<sub>un</sub> = 1)</span>. With <span class="tm" data-tex="\mathcal{L}_{\mathrm{im}} = \mathcal{L}_{\mathrm{un}} = 0">L<sub>im</sub> = L<sub>un</sub> = 0</span> the student must match both teacher branches, which rules out shifts and collapse whenever <span class="tm" data-tex="\Delta_T \neq 0">Δ<sub>T</sub> ≠ 0</span>.</p>
+
+        <details class="note">
+          <summary>TIRT Transfer: a frozen, learned timestep weighting</summary>
+          <p>The teacher is trained with TIRT, which multiplies the Min-SNR weight by a learned per-timestep factor <span class="tm" data-tex="\sigma(\lambda_t)">σ(λ<sub>t</sub>)</span> and normalises to unit mean:</p>
+          <div class="eq" data-tex="\omega_t = \frac{\min(\mathrm{SNR}_t,\gamma)}{\mathrm{SNR}_t}\,\sigma(\lambda_t),\qquad \hat\omega_t = \frac{\omega_t}{\bar\omega},\quad \gamma = 5" data-tag="2"></div>
+          <p>It is an empirical reweighting: at <span class="tm" data-tex="\lambda_t = 0">λ<sub>t</sub> = 0</span> it reduces to Min-SNR up to a constant. DASH copies the teacher's final normalised weights into the student and excludes them from the optimiser. In the ablation, using frozen Min-SNR weights instead costs <span data-k="d.minsnr_c10">2.60</span> / <span data-k="d.minsnr_c100">2.67</span> FID, and relearning the weights from λ = 0 costs <span data-k="d.relearn_c10">3.84</span> / <span data-k="d.relearn_c100">3.94</span> FID (CIFAR-10 / CIFAR-100).</p>
+        </details>
+        <details class="note">
+          <summary>TAG: an inference-time guidance schedule</summary>
+          <p>TAG changes the guidance weight across the sampling trajectory and leaves training untouched. It is shared by the teacher and every two-branch student, and it does not change the branch targets used in distillation.</p>
+          <div class="eq" data-tex="w(t) = w_{\min} + (w_{\max}-w_{\min})\,\sigma\!\big(\kappa\,(0.5 - t/T)\big)" data-tag="3"></div>
+        </details>
+      </div>
+
+      <figure class="tag-plot reveal" aria-labelledby="tag-cap">
+        <div id="tag-chart" class="chart chart--tag"></div>
+        <figcaption id="tag-cap" class="cap">TAG schedule from Eq. 3 with w<sub>min</sub> = <span data-k="tag.w_min">1.0</span>, w<sub>max</sub> = <span data-k="tag.w_max">4.0</span>, κ = <span data-k="tag.kappa">5.0</span>, T = <span data-k="tag.T">1000</span>. Because σ never reaches 0 or 1, the realised weight spans <span id="tag-range">1.23 to 3.77</span>. Sampling runs from t = T (high noise) to t = 0.</figcaption>
+      </figure>
+    </div>
+
+    <div class="geom reveal">
+      <h3 class="h3">Solution geometry</h3>
+      <figure class="geom__fig" aria-labelledby="geom-cap">
+        <div id="geom-svg" class="geom__canvas"></div>
+        <figcaption class="cap" id="geom-cap"><b>Figure 2, redrawn.</b> One output coordinate at a fixed input, with illustrative teacher values and w = 4. <b>Left:</b> the composite loss is zero along a whole line through the teacher's branches; it contains ideal recovery (i), shifts (ii) and collapse (iii), where the line meets the diagonal on which the two branches are equal and the guidance gap vanishes. The moving point stays at zero loss throughout. <b>Right:</b> DASH constrains each branch separately, so the two zero-loss sets cross at a single point.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ RESULTS ============================ -->
+<section class="section" id="results" aria-labelledby="results-h">
+  <div class="wrap">
+    <p class="eyebrow">Results</p>
+    <h2 id="results-h" class="h2">Closer to the teacher, and calibrated.</h2>
+    <p class="prose">All CIFAR results use 50K samples, 50-step DDIM, TAG w<sub>max</sub> = 4.0, and means over three seeds (42 / 123 / 456). Standard deviations are in the supplementary.</p>
+
+    <div class="block reveal" id="t1-block">
+      <div class="block__head">
+        <h3 class="h3" id="t1-h">Main comparison (Table 1)</h3>
+        <label class="switch"><input type="checkbox" id="t1-std"> <span>± std over 3 seeds</span></label>
+        <div class="seg" role="group" aria-label="Dataset for Table 1">
+          <button type="button" class="seg__btn" aria-pressed="true" data-ds="c10">CIFAR-10</button>
+          <button type="button" class="seg__btn" aria-pressed="false" data-ds="c100">CIFAR-100</button>
+        </div>
+      </div>
+      <div class="tablewrap" tabindex="0" role="region" aria-labelledby="t1-h">
+        <table class="dtable" id="t1"></table>
+      </div>
+      <ol class="footnotes" id="t1-notes"></ol>
+      <p class="pending" id="t1-pending"></p>
+    </div>
+
+    <div class="block reveal">
+      <div class="block__head">
+        <h3 class="h3" id="cal-h">Magnitude is not enough: ρ against cos(Δ)</h3>
+        <div class="seg" role="group" aria-label="Dataset for calibration chart">
+          <button type="button" class="seg__btn" aria-pressed="true" data-cal="c10">CIFAR-10</button>
+          <button type="button" class="seg__btn" aria-pressed="false" data-cal="c100">CIFAR-100</button>
+        </div>
+      </div>
+      <div class="panel"><div id="cal-chart" class="chart chart--cal" role="figure" aria-labelledby="cal-h cal-cap"></div></div>
+      <p class="cap" id="cal-cap">Each point is one method from Table 1; the teacher sits at (1, 1). Scratch keeps a large gap (ρ = <span data-k="t1.Scratch.rho_c10">0.80</span>) that points the wrong way (cos(Δ) = <span data-k="t1.Scratch.cos_c10">0.51</span>), so ρ alone would rank it above composite distillation. Cond-only (cos(Δ) undefined at ρ &lt; 0.10) and single-head (no separate branches) cannot be placed.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="block reveal">
+        <h3 class="h3" id="t2-h">ImageNet-64 (Table 2)</h3>
+        <p class="small">1000 classes, 64×64. <span data-k="headline.in64_teacher_params">116.5M</span> teacher, <span data-k="headline.in64_student_params">22.3M</span> student (<span data-k="headline.in64_compression" data-suffix="×">5.2×</span>).</p>
+        <div class="tablewrap" tabindex="0" role="region" aria-labelledby="t2-h">
+          <table class="dtable dtable--compact" id="t2"></table>
+        </div>
+        <p class="small muted">w/o L<sub>un</sub> isolates unconditional supervision as the source of the improvement.</p>
+      </div>
+      <div class="block reveal">
+        <h3 class="h3" id="nl-h">The null line, measured</h3>
+        <div class="panel"><div id="null-chart" class="chart chart--null" role="figure" aria-labelledby="nl-h nl-cap"></div></div>
+        <p class="cap" id="nl-cap">Branch-residual ratio ‖δ<sup>y</sup>‖ / ‖δ<sup>∅</sup>‖ of the composite students against the predicted (w−1)/w = <span data-k="null.predicted_ratio">0.75</span> at w = 4 (main §4.2, Supp. §C.1). Below: the drift toward collapse f satisfies f ≥ 1 − ρ on all three datasets.</p>
+      </div>
+    </div>
+
+    <div class="block reveal">
+      <h3 class="h3" id="ws-h">ρ grows with student width only under distillation</h3>
+      <div class="panel"><div id="width-chart" class="chart chart--width" role="figure" aria-labelledby="ws-h ws-cap"></div></div>
+      <p class="cap" id="ws-cap">Guidance-gap magnitude ρ on CIFAR-10 for students of 48, 64 and 96 base channels (Supp. Table D14). Hover or tap a point for parameters, compression and FID. The composite baseline was measured at 64 channels only.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SAMPLES ============================ -->
+<section class="section section--tint" id="samples" aria-labelledby="samples-h">
+  <div class="wrap">
+    <p class="eyebrow">Qualitative</p>
+    <h2 id="samples-h" class="h2">Teacher and student, side by side.</h2>
+    <div class="block__head">
+      <p class="prose small">Drag the divider (or focus it and use the arrow keys) to compare the teacher with the DASH student, using the grids from the paper (50-step DDIM, TAG w<sub>max</sub> = 4.0). Samples are shown exactly as stored in the paper's figures. Select a grid to open it full size.</p>
+      <div class="seg" role="group" aria-label="Dataset for sample grids" id="cmp-seg">
+        <button type="button" class="seg__btn" aria-pressed="true" data-cmp="c10">CIFAR-10</button>
+        <button type="button" class="seg__btn" aria-pressed="false" data-cmp="c100">CIFAR-100</button>
+        <button type="button" class="seg__btn" aria-pressed="false" data-cmp="in64">ImageNet-64</button>
+      </div>
+    </div>
+    <figure class="compare reveal" id="compare">
+      <ol class="compare__labels" id="cmp-labels" aria-label="Columns, left to right"></ol>
+      <div class="compare__stage" id="cmp-stage">
+        <button type="button" class="compare__open" id="cmp-open" aria-label="Open the sample grids full size"></button>
+        <picture class="compare__img compare__img--a">
+          <source type="image/avif" id="cmp-a-avif">
+          <source type="image/webp" id="cmp-a-webp">
+          <img id="cmp-a" width="2580" height="1290" loading="lazy" decoding="async" alt="">
+        </picture>
+        <picture class="compare__img compare__img--b" id="cmp-b-wrap">
+          <source type="image/avif" id="cmp-b-avif">
+          <source type="image/webp" id="cmp-b-webp">
+          <img id="cmp-b" width="2580" height="1290" loading="lazy" decoding="async" alt="">
+        </picture>
+        <span class="compare__tag compare__tag--a" id="cmp-tag-a">Teacher</span>
+        <span class="compare__tag compare__tag--b" id="cmp-tag-b">DASH student</span>
+        <div class="compare__handle" id="cmp-handle" aria-hidden="true"><span></span></div>
+        <input type="range" class="compare__range" id="cmp-range" min="0" max="100" value="50" step="1" aria-label="Comparison divider position: left shows the DASH student, right shows the teacher">
+      </div>
+      <figcaption class="cap" id="cmp-cap"></figcaption>
+    </figure>
+  </div>
+</section>
+
+<dialog class="lightbox" id="lightbox" aria-labelledby="lb-title">
+  <div class="lightbox__head">
+    <h2 id="lb-title" class="h3">Sample grids</h2>
+    <button type="button" class="lightbox__close" id="lb-close" aria-label="Close">×</button>
+  </div>
+  <div class="lightbox__body" id="lb-body"></div>
+</dialog>
+
+<!-- ============================ ABLATION ============================ -->
+<section class="section" id="ablation" aria-labelledby="ablation-h">
+  <div class="wrap">
+    <p class="eyebrow">Ablation</p>
+    <h2 id="ablation-h" class="h2">Unconditional supervision is the term that matters.</h2>
+    <p class="prose">Toggle the loss terms and choose the timestep weighting. Only configurations reported in Table 3 have results; other combinations were not run and are not interpolated.</p>
+    <div class="abl reveal">
+      <div class="abl__controls">
+        <fieldset class="chips">
+          <legend>Loss terms</legend>
+          <button type="button" class="chip chip--cond" aria-pressed="true" data-term="L_im"><span>L<sub>im</sub></span> <span class="chip__d">conditional</span></button>
+          <button type="button" class="chip chip--uncond" aria-pressed="true" data-term="L_un"><span>L<sub>un</sub></span> <span class="chip__d">unconditional</span></button>
+          <button type="button" class="chip chip--anchor" aria-pressed="true" data-term="L_an"><span>L<sub>an</sub></span> <span class="chip__d">anchor</span></button>
+        </fieldset>
+        <fieldset class="chips">
+          <legend>Timestep weighting</legend>
+          <label class="radio"><input type="radio" name="wt" value="transfer" checked> TIRT Transfer (frozen)</label>
+          <label class="radio"><input type="radio" name="wt" value="minsnr"> Frozen Min-SNR, no transfer</label>
+          <label class="radio"><input type="radio" name="wt" value="relearned"> TIRT relearned from λ = 0</label>
+        </fieldset>
+      </div>
+      <div class="abl__result" aria-live="polite">
+        <p class="abl__name" id="abl-name">DASH (ours)</p>
+        <div id="abl-bars" class="abl__bars"></div>
+        <p class="small muted" id="abl-msg"></p>
+      </div>
+    </div>
+    <label class="switch switch--right"><input type="checkbox" id="t3-std"> <span>± std over 3 seeds</span></label>
+    <div class="tablewrap reveal" tabindex="0" role="region" aria-label="Table 3, component ablation">
+      <table class="dtable dtable--compact" id="t3"></table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SUPPLEMENTARY ============================ -->
+<section class="section section--tint" id="supp" aria-labelledby="supp-h">
+  <div class="wrap">
+    <p class="eyebrow">From the supplementary</p>
+    <h2 id="supp-h" class="h2">More evidence, same conclusion.</h2>
+    <p class="prose">Further results from the <a href="assets/pdf/DASH_supp.pdf">supplementary material</a>: how the student holds up with fewer sampling steps and other guidance scales, whether the TAG schedule or the teacher recipe drives the result, and how the teacher itself was built.</p>
+
+    <div class="block reveal">
+      <div class="block__head">
+        <h3 class="h3" id="steps-h">Fewer sampling steps (Supp. Table D12, Fig. E8)</h3>
+        <div class="seg" role="group" aria-label="Dataset for the step-count results">
+          <button type="button" class="seg__btn" aria-pressed="true" data-steps="c10">CIFAR-10</button>
+          <button type="button" class="seg__btn" aria-pressed="false" data-steps="c100">CIFAR-100</button>
+          <button type="button" class="seg__btn" aria-pressed="false" data-steps="in64">ImageNet-64</button>
+        </div>
+      </div>
+      <div class="supp-steps">
+        <div class="panel"><div id="steps-chart" class="chart" role="figure" aria-labelledby="steps-h steps-cap"></div></div>
+        <div class="steps-grid" id="steps-grid"></div>
+      </div>
+      <p class="cap" id="steps-cap">FID of the teacher and the DASH student when sampling with fewer DDIM steps. The student is trained at 50 steps; the other step counts are inference-only. Samples on the right are the student's, as in Supp. Fig. E8.</p>
+    </div>
+
+    <div class="block reveal">
+      <h3 class="h3" id="sweep-h">Guidance scale (Supp. Table D15)</h3>
+      <div class="panel"><div id="sweep-chart" class="chart" role="figure" aria-labelledby="sweep-h sweep-cap"></div></div>
+      <p class="cap" id="sweep-cap"></p>
+    </div>
+
+    <div class="grid2">
+      <div class="block reveal">
+        <h3 class="h3" id="fixed-h">Fixed guidance against TAG (Supp. Table D16)</h3>
+        <div class="tablewrap" tabindex="0" role="region" aria-labelledby="fixed-h"><table class="dtable dtable--compact" id="t-fixed"></table></div>
+        <p class="cap">CIFAR-10, the same checkpoints under both protocols. The ordering does not change, and the cost of a fixed weight grows as calibration falls.</p>
+      </div>
+      <div class="block reveal">
+        <h3 class="h3" id="minsnr-h">A standard Min-SNR teacher (Supp. Table D13)</h3>
+        <div class="tablewrap" tabindex="0" role="region" aria-labelledby="minsnr-h"><table class="dtable dtable--compact" id="t-minsnr"></table></div>
+        <p class="cap">A teacher trained without TIRT and evaluated without TAG (fixed w = 1.5, CIFAR-10, single seed). DASH still leads composite distillation, so the advantage is not specific to the TIRT/TAG recipe.</p>
+      </div>
+    </div>
+
+    <div class="block reveal">
+      <h3 class="h3" id="teach-h">How the teacher was built (Supp. Table D8)</h3>
+      <div class="tablewrap" tabindex="0" role="region" aria-labelledby="teach-h"><table class="dtable" id="t-teach"></table></div>
+      <p class="cap" id="teach-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ EFFICIENCY ============================ -->
+<section class="section" id="efficiency" aria-labelledby="eff-h">
+  <div class="wrap">
+    <p class="eyebrow">Efficiency</p>
+    <h2 id="eff-h" class="h2">Measured on one NVIDIA T4, batch 64.</h2>
+    <div class="effgrid" id="eff"></div>
+    <p class="eff-note" id="eff-note"></p>
+  </div>
+</section>
+
+<!-- ============================ LIMITATIONS ============================ -->
+<section class="section section--tint" id="limitations" aria-labelledby="lim-h">
+  <div class="wrap">
+    <p class="eyebrow">Limitations</p>
+    <h2 id="lim-h" class="h2 h2--sm">What this does not show yet.</h2>
+    <ol class="lims">
+      <li>The full baseline sweep and the ablations are at CIFAR scale. ImageNet-64 (1000 classes, 64×64) confirms the main effect, composite against DASH and the removal of L<sub>un</sub>.</li>
+      <li>Latent diffusion with cross-attention conditioning and transformer backbones remain open.</li>
+      <li>The residual offset tracks capacity: under distillation ρ rises with student width (<span data-k="ws.dash.0">0.86</span> → <span data-k="ws.dash.1">0.91</span> → <span data-k="ws.dash.2">0.94</span>), while the teacher-free reference stays near <span data-k="ws.scratch.0">0.81</span> / <span data-k="ws.scratch.1">0.80</span> / <span data-k="ws.scratch.2">0.83</span>.</li>
+      <li>TIRT and TAG are evaluated under one teacher recipe; a standard Min-SNR teacher preserves the ordering, but one extra recipe does not establish generality.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================ BIBTEX ============================ -->
+<section class="section" id="bibtex" aria-labelledby="bib-h">
+  <div class="wrap">
+    <p class="eyebrow">Citation</p>
+    <h2 id="bib-h" class="h2 h2--sm">BibTeX</h2>
+    <!-- TODO: add pages and DOI once CVF publishes the proceedings. -->
+    <div class="bib">
+      <button type="button" class="bib__copy" id="bib-copy">Copy</button>
+<pre id="bib-text" tabindex="0" aria-label="BibTeX entry"><code>@inproceedings{shafi2027dash,
+  title     = {{DASH}: Dual-Branch Score Distillation for Guidance-Calibrated Compact Diffusion Models},
+  author    = {Shafi, Abdullah Al and Alam, Kazi Saeed and Hossain, Sk Imran and Mephu Nguifo, Engelbert},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+  year      = {2027}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ AUTHOR ============================ -->
+<section class="section section--tint section--author" id="author" aria-labelledby="author-h">
+  <div class="wrap">
+    <div class="author-card">
+      <picture class="author-card__photo">
+        <source type="image/webp" srcset="assets/img/author.webp">
+        <img src="assets/img/author.jpg" width="240" height="240" loading="lazy" decoding="async" alt="Portrait of Abdullah Al Shafi">
+      </picture>
+      <div class="author-card__body">
+        <p class="eyebrow">Contact</p>
+        <h2 id="author-h" class="author-card__name">Abdullah Al Shafi</h2>
+        <p class="author-card__role">First author · Department of Computer Science and Engineering, KUET, Bangladesh</p>
+        <p class="author-card__note">Questions about the paper or the code are welcome. Please open an issue on the code repository or reach out through the links below.</p>
+        <ul class="social" aria-label="Abdullah Al Shafi online">
+          <li><a href="https://c-loud-nine.github.io"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Homepage</a></li>
+          <li><a href="https://scholar.google.com/citations?user=ArbB-roAAAAJ"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 1.5 9.5 12 16l10.5-6.5z" fill="currentColor"/><path d="M5.5 12.2v4.3c1.6 1.7 4 2.5 6.5 2.5s4.9-.8 6.5-2.5v-4.3L12 16z" fill="currentColor" opacity=".7"/></svg>Google Scholar</a></li>
+          <li><a href="https://orcid.org/0009-0005-5114-6354"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><text x="12" y="16" text-anchor="middle" font-size="10" font-weight="700" fill="var(--surface)" font-family="Inter, sans-serif">iD</text></svg>ORCID</a></li>
+          <li><a href="https://github.com/C-loud-Nine"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .8.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/shafi-abdullah-0955a0293/"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="currentColor"/><path d="M6.5 10v7.5M6.5 6.8v.1M10.5 17.5V10m0 3.5c0-2 1.2-3.6 3-3.6s2.5 1.2 2.5 3.4v4.2" stroke="var(--surface)" stroke-width="2" stroke-linecap="round" fill="none"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.researchgate.net/profile/Abdullah-Shafi-11"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="currentColor"/><text x="12" y="16.2" text-anchor="middle" font-size="10" font-weight="700" fill="var(--surface)" font-family="Inter, sans-serif">RG</text></svg>ResearchGate</a></li>
+          <li><a href="https://huggingface.co/Shafi99"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><circle cx="9" cy="10.5" r="1.3" fill="var(--surface)"/><circle cx="15" cy="10.5" r="1.3" fill="var(--surface)"/><path d="M8.5 14.2c1.8 2 5.2 2 7 0" stroke="var(--surface)" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>Hugging Face</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div class="footer__brand">
+      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><use href="#mark"/></svg>
+      <div>
+        <p class="footer__title">DASH</p>
+        <p>Dual-Branch Score Distillation for Guidance-Calibrated Compact Diffusion Models. WACV 2027.</p>
+      </div>
+    </div>
+    <ul class="footer__links" aria-label="Resources">
+      <li><a href="https://arxiv.org/abs/2606.00798">arXiv</a></li>
+      <li><a href="https://github.com/C-loud-Nine/DASH_Dual-Branch-Score-Distillation">Code</a></li>
+      <li><a href="#bibtex">Cite</a></li>
+      <li><a href="#author">Contact</a></li>
+      <li><a href="#top">Back to top</a></li>
+    </ul>
+    <!-- TODO: confirm and add a compute acknowledgement, e.g. "ImageNet-64 experiments were supported with
+         Cloud TPUs from Google's TPU Research Cloud (TRC)." Only publish once confirmed. -->
+    <p class="footer__meta">Page design and code are original to this project. Figures and samples are from the paper and its supplementary material. Last updated <time datetime="2026-10-15">15 October 2026</time>.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="tip" id="tip" role="tooltip" hidden></div>
+</body>
+</html>

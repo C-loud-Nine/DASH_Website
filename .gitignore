@@ -1,0 +1,14 @@
+# Local tooling output and dependencies
+tools/node_modules/
+tools/out/
+
+# Private / source material kept out of the public repo:
+# WACV_2/ holds the anonymous review submission and code package,
+# paper/ holds the source PDFs used to extract figures (see README).
+WACV_2/
+paper/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini

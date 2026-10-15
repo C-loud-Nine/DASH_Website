@@ -1,0 +1,959 @@
+{
+  "_meta": {
+    "source_main": "paper/WACV_3315.pdf (submitted version, = arXiv 2606.00798v2)",
+    "source_supp": "paper/DASH_supp.pdf",
+    "verified_on": "2026-10-15",
+    "camera_ready": "TODO: re-verify every value against the camera-ready PDF and update here"
+  },
+  "headline": {
+    "teacher_params": "35.8M",
+    "student_params": "6.1M",
+    "compression": 5.9,
+    "in64_teacher_params": "116.5M",
+    "in64_student_params": "22.3M",
+    "in64_compression": 5.2,
+    "_source": "Main §3.2, §4.1, Table 2 caption"
+  },
+  "table1_main": {
+    "_source": "Main paper Table 1 (p.7)",
+    "columns": [
+      "model",
+      "params",
+      "c10_fid",
+      "c10_is",
+      "c100_fid",
+      "c100_is",
+      "rho_c10",
+      "rho_c100",
+      "cos_c10",
+      "cos_c100",
+      "mse_c10",
+      "mse_c100",
+      "group"
+    ],
+    "rows": [
+      [
+        "DASH-Teacher",
+        "35.8M",
+        5.47,
+        9.42,
+        6.8,
+        7.46,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        "teacher"
+      ],
+      [
+        "Scratch",
+        "6.1M",
+        20.47,
+        7.44,
+        26.14,
+        6.51,
+        0.8,
+        0.78,
+        0.51,
+        0.48,
+        0.213,
+        0.247,
+        "loss"
+      ],
+      [
+        "Cond-only",
+        "6.1M",
+        22.31,
+        7.21,
+        27.83,
+        5.98,
+        0.09,
+        0.08,
+        null,
+        null,
+        0.242,
+        0.292,
+        "loss"
+      ],
+      [
+        "Composite (two-branch adaptation of Meng et al.)",
+        "6.1M",
+        13.84,
+        8.63,
+        20.84,
+        6.84,
+        0.68,
+        0.65,
+        0.71,
+        0.69,
+        0.119,
+        0.152,
+        "loss"
+      ],
+      [
+        "Multi-w composite",
+        "6.1M",
+        13.67,
+        8.96,
+        19.13,
+        7.23,
+        0.75,
+        0.71,
+        0.79,
+        0.77,
+        0.098,
+        0.14,
+        "loss"
+      ],
+      [
+        "FitNets",
+        "6.1M",
+        12.84,
+        8.74,
+        19.47,
+        6.89,
+        0.63,
+        0.61,
+        0.68,
+        0.66,
+        0.128,
+        0.161,
+        "loss"
+      ],
+      [
+        "Gap Δ match",
+        "6.1M",
+        11.42,
+        8.34,
+        18.46,
+        6.58,
+        0.81,
+        0.78,
+        0.86,
+        0.84,
+        0.063,
+        0.086,
+        "loss"
+      ],
+      [
+        "Label-dropout",
+        "6.1M",
+        11.43,
+        8.88,
+        14.56,
+        7.1,
+        0.81,
+        0.82,
+        0.83,
+        0.79,
+        0.059,
+        0.071,
+        "loss"
+      ],
+      [
+        "Magnitude pruning",
+        "8.95M",
+        18.04,
+        8.56,
+        24.48,
+        6.89,
+        0.71,
+        0.66,
+        0.68,
+        0.65,
+        0.08,
+        0.101,
+        "compression"
+      ],
+      [
+        "Single-head, w-conditioned",
+        "8.99M",
+        16.78,
+        9.0,
+        23.5,
+        7.19,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "compression"
+      ],
+      [
+        "DASH (ours)",
+        "6.1M",
+        8.87,
+        9.31,
+        10.47,
+        7.41,
+        0.91,
+        0.89,
+        0.94,
+        0.93,
+        0.028,
+        0.04,
+        "ours"
+      ]
+    ],
+    "notes": {
+      "cond_only_cos": "cos(Δ) not meaningful when ||Δ_S|| ≈ 0 (ρ < 0.10)",
+      "single_head": "emits no separate branches, so ρ, cos(Δ), MSE_Δ are undefined",
+      "multi_w": "w sampled per step from U[1.5, 5.0]",
+      "protocol": "50K samples, 50-step DDIM, TAG w_max = 4.0, means over 3 seeds (42/123/456); std in supplementary"
+    },
+    "pending_camera_ready": [
+      "Balanced 50/50 branch supervision baseline",
+      "Per-method guidance sweeps"
+    ]
+  },
+  "table2_imagenet64": {
+    "_source": "Main paper Table 2 (p.7)",
+    "columns": [
+      "model",
+      "fid",
+      "is",
+      "rho",
+      "cos",
+      "mse"
+    ],
+    "rows": [
+      [
+        "Teacher (116.5M)",
+        6.34,
+        48.35,
+        1.0,
+        1.0,
+        0.0
+      ],
+      [
+        "Composite",
+        18.43,
+        43.67,
+        0.65,
+        0.68,
+        0.13
+      ],
+      [
+        "w/o L_un",
+        20.13,
+        41.67,
+        0.22,
+        0.27,
+        0.228
+      ],
+      [
+        "DASH (22.3M)",
+        9.1,
+        47.32,
+        0.89,
+        0.92,
+        0.036
+      ]
+    ]
+  },
+  "table3_ablation": {
+    "_source": "Main paper Table 3 (p.8); paper labels for the TIRT rows are 'TIRT: fixed schedule' and 'TIRT: learned λ0=0'",
+    "columns": [
+      "config",
+      "L_im",
+      "L_un",
+      "L_an",
+      "c10_fid",
+      "c10_is",
+      "c100_fid",
+      "c100_is",
+      "rho_c10",
+      "rho_c100",
+      "cos_c10",
+      "cos_c100",
+      "mse_c10",
+      "mse_c100"
+    ],
+    "rows": [
+      [
+        "Scratch",
+        false,
+        false,
+        false,
+        20.47,
+        7.44,
+        26.14,
+        6.51,
+        0.8,
+        0.78,
+        0.51,
+        0.48,
+        0.213,
+        0.247
+      ],
+      [
+        "w/o L_un",
+        true,
+        false,
+        true,
+        18.84,
+        7.23,
+        22.95,
+        6.21,
+        0.23,
+        0.24,
+        0.27,
+        0.25,
+        0.221,
+        0.271
+      ],
+      [
+        "w/o L_im",
+        false,
+        true,
+        true,
+        21.84,
+        7.12,
+        28.37,
+        5.84,
+        0.41,
+        0.38,
+        0.46,
+        0.43,
+        0.28,
+        0.332
+      ],
+      [
+        "w/o L_an",
+        true,
+        true,
+        false,
+        10.54,
+        9.11,
+        12.38,
+        7.28,
+        0.88,
+        0.86,
+        0.93,
+        0.92,
+        0.033,
+        0.046
+      ],
+      [
+        "No transfer: frozen Min-SNR",
+        true,
+        true,
+        true,
+        11.47,
+        8.62,
+        13.14,
+        7.03,
+        0.84,
+        0.81,
+        0.89,
+        0.87,
+        0.05,
+        0.072
+      ],
+      [
+        "TIRT relearned from λ=0",
+        true,
+        true,
+        true,
+        12.71,
+        8.44,
+        14.41,
+        6.88,
+        0.82,
+        0.79,
+        0.87,
+        0.84,
+        0.059,
+        0.082
+      ],
+      [
+        "DASH (ours)",
+        true,
+        true,
+        true,
+        8.87,
+        9.31,
+        10.47,
+        7.41,
+        0.91,
+        0.89,
+        0.94,
+        0.93,
+        0.028,
+        0.04
+      ]
+    ],
+    "weighting": {
+      "No transfer: frozen Min-SNR": "minsnr",
+      "TIRT relearned from λ=0": "relearned",
+      "DASH (ours)": "transfer",
+      "w/o L_un": "transfer",
+      "w/o L_im": "transfer",
+      "w/o L_an": "transfer",
+      "Scratch": "none"
+    }
+  },
+  "null_line": {
+    "_source": "Main §4.2 (p.6); Supp. §C.1 table (p.4)",
+    "predicted_ratio": 0.75,
+    "w": 4.0,
+    "rows": [
+      [
+        "CIFAR-10",
+        0.77,
+        0.34,
+        0.32
+      ],
+      [
+        "CIFAR-100",
+        0.73,
+        0.38,
+        0.35
+      ],
+      [
+        "ImageNet-64",
+        0.79,
+        0.4,
+        0.35
+      ]
+    ],
+    "columns": [
+      "dataset",
+      "measured_ratio",
+      "f_toward_collapse",
+      "one_minus_rho"
+    ]
+  },
+  "width_scaling_rho": {
+    "_source": "Supp. Table D14 (p.11); calibration on CIFAR-10",
+    "channels": [
+      48,
+      64,
+      96
+    ],
+    "params": [
+      "3.4M",
+      "6.1M",
+      "14.2M"
+    ],
+    "compression": [
+      "10.5×",
+      "5.9×",
+      "2.5×"
+    ],
+    "dash": [
+      0.86,
+      0.91,
+      0.94
+    ],
+    "scratch": [
+      0.81,
+      0.8,
+      0.83
+    ],
+    "dash_cos": [
+      0.91,
+      0.94,
+      0.96
+    ],
+    "scratch_cos": [
+      0.45,
+      0.51,
+      0.58
+    ],
+    "dash_c10_fid": [
+      12.24,
+      8.87,
+      7.43
+    ],
+    "scratch_c10_fid": [
+      22.14,
+      20.47,
+      17.88
+    ],
+    "dash_c100_fid": [
+      15.77,
+      10.47,
+      8.91
+    ],
+    "scratch_c100_fid": [
+      28.79,
+      26.14,
+      22.08
+    ],
+    "composite_rho_ch64": 0.68
+  },
+  "efficiency_t4_bs64": {
+    "_source": "Main §4.1 (p.5); Supp. Table A3 (p.4)",
+    "flops_reduction": 5.77,
+    "throughput_gain": 3.62,
+    "flops_50step_g": {
+      "Teacher": 1247.8,
+      "DASH student": 216.3,
+      "Single-head": 159.7
+    },
+    "latency_ms": {
+      "Teacher": 14217.3,
+      "DASH student": 3925.8,
+      "Single-head": 3424.8
+    },
+    "samples_per_sec": {
+      "Teacher": 4.5,
+      "DASH student": 16.3,
+      "Single-head": 18.69
+    },
+    "peak_memory_mb": {
+      "Teacher": 821.1,
+      "DASH student": 349.9,
+      "Single-head": 419.5
+    },
+    "note": "Single-head runs one forward pass per step (DASH runs two), so it is slightly faster per step but 13.03 FID worse on CIFAR-100. The DASH/single-head latency difference is comparable to profiling variance (Supp. Table A3)."
+  },
+  "tag": {
+    "_source": "Main Eq. 3 (p.3); Supp. Table A1",
+    "w_min": 1.0,
+    "w_max": 4.0,
+    "kappa": 5.0,
+    "T": 1000
+  },
+  "losses": {
+    "_source": "Main Eqs. 5-8 (p.4)",
+    "lambda_an": 0.1,
+    "lambda_im": 1.0,
+    "lambda_un": 1.0
+  },
+  "std_table1": {
+    "_source": "Supp. Table D9 (p.9): mean±std over seeds 42/123/456; teacher row is the spread of three teacher runs",
+    "columns": [
+      "model",
+      "c10_fid",
+      "c10_is",
+      "c100_fid",
+      "c100_is"
+    ],
+    "rows": [
+      [
+        "DASH-Teacher",
+        0.04,
+        0.05,
+        0.05,
+        0.04
+      ],
+      [
+        "Scratch",
+        0.31,
+        0.09,
+        0.44,
+        0.08
+      ],
+      [
+        "Cond-only",
+        0.46,
+        0.11,
+        0.59,
+        0.1
+      ],
+      [
+        "Composite (two-branch adaptation of Meng et al.)",
+        0.22,
+        0.08,
+        0.37,
+        0.07
+      ],
+      [
+        "Multi-w composite",
+        0.19,
+        0.09,
+        0.37,
+        0.05
+      ],
+      [
+        "FitNets",
+        0.21,
+        0.08,
+        0.35,
+        0.07
+      ],
+      [
+        "Gap Δ match",
+        0.18,
+        0.07,
+        0.33,
+        0.07
+      ],
+      [
+        "Label-dropout",
+        0.11,
+        0.09,
+        0.27,
+        0.11
+      ],
+      [
+        "Magnitude pruning",
+        0.33,
+        0.07,
+        0.43,
+        0.08
+      ],
+      [
+        "Single-head, w-conditioned",
+        0.25,
+        0.06,
+        0.47,
+        0.09
+      ],
+      [
+        "DASH (ours)",
+        0.12,
+        0.06,
+        0.16,
+        0.05
+      ]
+    ]
+  },
+  "std_table2": {
+    "_source": "Supp. Table D10 (p.9)",
+    "columns": [
+      "model",
+      "fid",
+      "is"
+    ],
+    "rows": [
+      [
+        "Teacher (116.5M)",
+        0.09,
+        0.31
+      ],
+      [
+        "Composite",
+        0.43,
+        0.35
+      ],
+      [
+        "w/o L_un",
+        0.31,
+        0.53
+      ],
+      [
+        "DASH (22.3M)",
+        0.14,
+        0.37
+      ]
+    ]
+  },
+  "std_table3": {
+    "_source": "Supp. Table D11 (p.10)",
+    "columns": [
+      "config",
+      "c10_fid",
+      "c10_is",
+      "c100_fid",
+      "c100_is"
+    ],
+    "rows": [
+      [
+        "Scratch",
+        0.31,
+        0.09,
+        0.44,
+        0.08
+      ],
+      [
+        "w/o L_un",
+        0.31,
+        0.09,
+        0.34,
+        0.08
+      ],
+      [
+        "w/o L_im",
+        0.54,
+        0.12,
+        0.68,
+        0.11
+      ],
+      [
+        "w/o L_an",
+        0.14,
+        0.06,
+        0.19,
+        0.05
+      ],
+      [
+        "No transfer: frozen Min-SNR",
+        0.17,
+        0.07,
+        0.21,
+        0.06
+      ],
+      [
+        "TIRT relearned from λ=0",
+        0.19,
+        0.07,
+        0.24,
+        0.06
+      ],
+      [
+        "DASH (ours)",
+        0.12,
+        0.06,
+        0.16,
+        0.05
+      ]
+    ]
+  },
+  "step_count": {
+    "_source": "Supp. Table D12 (p.10): FID, 50K samples, TAG w_max=4.0; student trained at 50 steps, other counts inference-only",
+    "steps": [
+      50,
+      25,
+      10,
+      5
+    ],
+    "c10": {
+      "teacher": [
+        5.47,
+        5.61,
+        6.84,
+        9.12
+      ],
+      "dash": [
+        8.87,
+        9.25,
+        10.44,
+        13.55
+      ]
+    },
+    "c100": {
+      "teacher": [
+        6.8,
+        7.03,
+        8.62,
+        11.74
+      ],
+      "dash": [
+        10.47,
+        11.23,
+        12.68,
+        15.94
+      ]
+    },
+    "in64": {
+      "teacher": [
+        6.34,
+        6.75,
+        8.23,
+        10.56
+      ],
+      "dash": [
+        9.1,
+        9.96,
+        11.1,
+        14.21
+      ]
+    }
+  },
+  "guidance_sweep": {
+    "_source": "Supp. Table D15 (p.11): FID, CIFAR-10, ch=64, 50K samples, 50 steps; columns are TAG w_max (w_min = 1.0 throughout)",
+    "w_max": [
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0
+    ],
+    "teacher": [
+      10.42,
+      8.31,
+      7.14,
+      6.52,
+      5.89,
+      5.47,
+      5.61,
+      6.23
+    ],
+    "dash": [
+      13.87,
+      11.38,
+      10.12,
+      9.41,
+      8.94,
+      8.87,
+      9.23,
+      10.11
+    ],
+    "note": "At w_max = 1.5 TAG spans only [1.04, 1.46] and is effectively unguided over the high-noise half of the trajectory."
+  },
+  "fixed_vs_tag": {
+    "_source": "Supp. Table D16 (p.11): CIFAR-10, ch=64, 50K samples, 50-step DDIM; same checkpoints under both protocols",
+    "columns": [
+      "model",
+      "fixed_w4",
+      "tag_wmax4"
+    ],
+    "rows": [
+      [
+        "Teacher",
+        6.1,
+        5.47
+      ],
+      [
+        "Composite",
+        15.21,
+        13.84
+      ],
+      [
+        "w/o L_un",
+        20.32,
+        18.84
+      ],
+      [
+        "DASH (ours)",
+        9.65,
+        8.87
+      ]
+    ]
+  },
+  "teacher_ablation": {
+    "_source": "Supp. Table D8 (p.7): FID/IS, 50K samples. † fixed w=1.5; ‡ fixed w=4.0. Published rows are for scale only (different architectures, budgets and evaluation), not controlled comparisons.",
+    "columns": [
+      "method",
+      "params",
+      "steps",
+      "c10_fid",
+      "c10_is",
+      "c100_fid",
+      "c100_is",
+      "group"
+    ],
+    "rows": [
+      [
+        "DDPM",
+        "35M",
+        1000,
+        3.17,
+        9.46,
+        4.21,
+        7.58,
+        "published"
+      ],
+      [
+        "iDDPM",
+        "53M",
+        4000,
+        2.9,
+        9.58,
+        3.64,
+        7.82,
+        "published"
+      ],
+      [
+        "EDM",
+        "56M",
+        35,
+        1.97,
+        9.68,
+        2.44,
+        8.12,
+        "published"
+      ],
+      [
+        "Min-SNR base †",
+        "35.8M",
+        50,
+        9.21,
+        8.54,
+        10.84,
+        7.18,
+        "ours"
+      ],
+      [
+        "+ Fixed CFG ‡",
+        "35.8M",
+        50,
+        8.05,
+        8.79,
+        9.46,
+        7.38,
+        "ours"
+      ],
+      [
+        "+ TAG only",
+        "35.8M",
+        50,
+        7.42,
+        8.94,
+        8.71,
+        7.43,
+        "ours"
+      ],
+      [
+        "+ TIRT only †",
+        "35.8M",
+        50,
+        7.16,
+        8.71,
+        8.37,
+        7.29,
+        "ours"
+      ],
+      [
+        "Full (TAG + TIRT)",
+        "35.8M",
+        50,
+        5.47,
+        9.42,
+        6.8,
+        7.46,
+        "ours"
+      ]
+    ]
+  },
+  "minsnr_teacher": {
+    "_source": "Supp. Table D13 (p.10): standard Min-SNR teacher, no TIRT, no TAG; CIFAR-10, single seed, fixed w=1.5, 50-step DDIM",
+    "columns": [
+      "model",
+      "params",
+      "fid",
+      "is",
+      "rho",
+      "cos",
+      "mse"
+    ],
+    "rows": [
+      [
+        "Teacher",
+        "35.8M",
+        9.21,
+        8.54,
+        1.0,
+        1.0,
+        0.0
+      ],
+      [
+        "Composite",
+        "6.1M",
+        23.32,
+        7.65,
+        0.53,
+        0.58,
+        0.214
+      ],
+      [
+        "DASH (ours)",
+        "6.1M",
+        13.74,
+        8.21,
+        0.81,
+        0.84,
+        0.08
+      ]
+    ]
+  }
+}

@@ -1,0 +1,579 @@
+[
+  {
+    "stem": "fig1-pipeline",
+    "figure": "Fig. 1",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.4",
+    "note": "Rasterised at 288 dpi, clip (70.4, 70.4, 542.7, 273.0)",
+    "variants": [
+      {
+        "width": 1890,
+        "height": 812,
+        "files": [
+          "fig1-pipeline.png",
+          "fig1-pipeline.webp",
+          "fig1-pipeline.avif"
+        ]
+      },
+      {
+        "width": 1600,
+        "height": 687,
+        "files": [
+          "fig1-pipeline-1600.png",
+          "fig1-pipeline-1600.webp",
+          "fig1-pipeline-1600.avif"
+        ]
+      },
+      {
+        "width": 960,
+        "height": 412,
+        "files": [
+          "fig1-pipeline-960.png",
+          "fig1-pipeline-960.webp",
+          "fig1-pipeline-960.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "fig2-geometry",
+    "figure": "Fig. 2",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.5",
+    "note": "Rasterised at 288 dpi, clip (142.7, 69.6, 470.4, 240.1)",
+    "variants": [
+      {
+        "width": 1312,
+        "height": 683,
+        "files": [
+          "fig2-geometry.png",
+          "fig2-geometry.webp",
+          "fig2-geometry.avif"
+        ]
+      },
+      {
+        "width": 1200,
+        "height": 625,
+        "files": [
+          "fig2-geometry-1200.png",
+          "fig2-geometry-1200.webp",
+          "fig2-geometry-1200.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "fig2-composite",
+    "figure": "Fig. 2 (left)",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.5",
+    "note": "Left panel of Fig. 2",
+    "variants": [
+      {
+        "width": 657,
+        "height": 683,
+        "files": [
+          "fig2-composite.png",
+          "fig2-composite.webp",
+          "fig2-composite.avif"
+        ]
+      },
+      {
+        "width": 640,
+        "height": 665,
+        "files": [
+          "fig2-composite-640.png",
+          "fig2-composite-640.webp",
+          "fig2-composite-640.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "fig2-dash",
+    "figure": "Fig. 2 (right)",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.5",
+    "note": "Right panel of Fig. 2",
+    "variants": [
+      {
+        "width": 656,
+        "height": 683,
+        "files": [
+          "fig2-dash.png",
+          "fig2-dash.webp",
+          "fig2-dash.avif"
+        ]
+      },
+      {
+        "width": 640,
+        "height": 666,
+        "files": [
+          "fig2-dash-640.png",
+          "fig2-dash-640.webp",
+          "fig2-dash-640.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "c10-teacher",
+    "figure": "Fig. 3a",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.8",
+    "note": "Embedded sample tiles placed unscaled on a 258 px pitch (2 px gutter); no resampling of samples.",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 1290,
+        "files": [
+          "c10-teacher.png",
+          "c10-teacher.webp",
+          "c10-teacher.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 645,
+        "files": [
+          "c10-teacher-1290.png",
+          "c10-teacher-1290.webp",
+          "c10-teacher-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "teaser-c10-teacher",
+    "figure": "Fig. 3a, row 1",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.8",
+    "note": "Row 1 of the grid above, cropped",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 258,
+        "files": [
+          "teaser-c10-teacher.png",
+          "teaser-c10-teacher.webp",
+          "teaser-c10-teacher.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 129,
+        "files": [
+          "teaser-c10-teacher-1290.png",
+          "teaser-c10-teacher-1290.webp",
+          "teaser-c10-teacher-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "c10-student",
+    "figure": "Fig. 3b",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.8",
+    "note": "Embedded sample tiles placed unscaled on a 258 px pitch (2 px gutter); no resampling of samples.",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 1290,
+        "files": [
+          "c10-student.png",
+          "c10-student.webp",
+          "c10-student.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 645,
+        "files": [
+          "c10-student-1290.png",
+          "c10-student-1290.webp",
+          "c10-student-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "teaser-c10-student",
+    "figure": "Fig. 3b, row 1",
+    "source": "WACV_3315.pdf (sha256 0884eecd80deeab5) p.8",
+    "note": "Row 1 of the grid above, cropped",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 258,
+        "files": [
+          "teaser-c10-student.png",
+          "teaser-c10-student.webp",
+          "teaser-c10-student.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 129,
+        "files": [
+          "teaser-c10-student-1290.png",
+          "teaser-c10-student-1290.webp",
+          "teaser-c10-student-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "c100-teacher",
+    "figure": "Supp. Fig. E6a",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.13",
+    "note": "Embedded sample tiles placed unscaled on a 258 px pitch (2 px gutter); no resampling of samples.",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 1290,
+        "files": [
+          "c100-teacher.png",
+          "c100-teacher.webp",
+          "c100-teacher.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 645,
+        "files": [
+          "c100-teacher-1290.png",
+          "c100-teacher-1290.webp",
+          "c100-teacher-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "c100-student",
+    "figure": "Supp. Fig. E6b",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.13",
+    "note": "Embedded sample tiles placed unscaled on a 258 px pitch (2 px gutter); no resampling of samples.",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 1290,
+        "files": [
+          "c100-student.png",
+          "c100-student.webp",
+          "c100-student.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 645,
+        "files": [
+          "c100-student-1290.png",
+          "c100-student-1290.webp",
+          "c100-student-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "in64-teacher",
+    "figure": "Supp. Fig. E7a",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.14",
+    "note": "Embedded sample tiles placed unscaled on a 258 px pitch (2 px gutter); no resampling of samples.",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 1290,
+        "files": [
+          "in64-teacher.png",
+          "in64-teacher.webp",
+          "in64-teacher.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 645,
+        "files": [
+          "in64-teacher-1290.png",
+          "in64-teacher-1290.webp",
+          "in64-teacher-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "teaser-in64-teacher",
+    "figure": "Supp. Fig. E7a, row 1",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.14",
+    "note": "Row 1 of the grid above, cropped",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 258,
+        "files": [
+          "teaser-in64-teacher.png",
+          "teaser-in64-teacher.webp",
+          "teaser-in64-teacher.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 129,
+        "files": [
+          "teaser-in64-teacher-1290.png",
+          "teaser-in64-teacher-1290.webp",
+          "teaser-in64-teacher-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "in64-student",
+    "figure": "Supp. Fig. E7b",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.14",
+    "note": "Embedded sample tiles placed unscaled on a 258 px pitch (2 px gutter); no resampling of samples.",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 1290,
+        "files": [
+          "in64-student.png",
+          "in64-student.webp",
+          "in64-student.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 645,
+        "files": [
+          "in64-student-1290.png",
+          "in64-student-1290.webp",
+          "in64-student-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "teaser-in64-student",
+    "figure": "Supp. Fig. E7b, row 1",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.14",
+    "note": "Row 1 of the grid above, cropped",
+    "variants": [
+      {
+        "width": 2580,
+        "height": 258,
+        "files": [
+          "teaser-in64-student.png",
+          "teaser-in64-student.webp",
+          "teaser-in64-student.avif"
+        ]
+      },
+      {
+        "width": 1290,
+        "height": 129,
+        "files": [
+          "teaser-in64-student-1290.png",
+          "teaser-in64-student-1290.webp",
+          "teaser-in64-student-1290.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c10-50",
+    "figure": "Supp. Fig. E8 (c10, 50 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 1548px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c10-50.png",
+          "e8-c10-50.webp",
+          "e8-c10-50.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c10-25",
+    "figure": "Supp. Fig. E8 (c10, 25 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 1548px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c10-25.png",
+          "e8-c10-25.webp",
+          "e8-c10-25.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c10-10",
+    "figure": "Supp. Fig. E8 (c10, 10 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 1548px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c10-10.png",
+          "e8-c10-10.webp",
+          "e8-c10-10.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c10-5",
+    "figure": "Supp. Fig. E8 (c10, 5 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 1548px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c10-5.png",
+          "e8-c10-5.webp",
+          "e8-c10-5.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c100-50",
+    "figure": "Supp. Fig. E8 (c100, 50 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 771px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c100-50.png",
+          "e8-c100-50.webp",
+          "e8-c100-50.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c100-25",
+    "figure": "Supp. Fig. E8 (c100, 25 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 771px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c100-25.png",
+          "e8-c100-25.webp",
+          "e8-c100-25.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c100-10",
+    "figure": "Supp. Fig. E8 (c100, 10 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 771px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c100-10.png",
+          "e8-c100-10.webp",
+          "e8-c100-10.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-c100-5",
+    "figure": "Supp. Fig. E8 (c100, 5 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 771px, downscaled to 532px",
+    "variants": [
+      {
+        "width": 532,
+        "height": 532,
+        "files": [
+          "e8-c100-5.png",
+          "e8-c100-5.webp",
+          "e8-c100-5.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-in64-50",
+    "figure": "Supp. Fig. E8 (in64, 50 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 266px",
+    "variants": [
+      {
+        "width": 266,
+        "height": 266,
+        "files": [
+          "e8-in64-50.png",
+          "e8-in64-50.webp",
+          "e8-in64-50.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-in64-25",
+    "figure": "Supp. Fig. E8 (in64, 25 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 266px",
+    "variants": [
+      {
+        "width": 266,
+        "height": 266,
+        "files": [
+          "e8-in64-25.png",
+          "e8-in64-25.webp",
+          "e8-in64-25.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-in64-10",
+    "figure": "Supp. Fig. E8 (in64, 10 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 266px",
+    "variants": [
+      {
+        "width": 266,
+        "height": 266,
+        "files": [
+          "e8-in64-10.png",
+          "e8-in64-10.webp",
+          "e8-in64-10.avif"
+        ]
+      }
+    ]
+  },
+  {
+    "stem": "e8-in64-5",
+    "figure": "Supp. Fig. E8 (in64, 5 steps)",
+    "source": "DASH_supp.pdf (sha256 a1f2a153579b0fa9) p.15",
+    "note": "Embedded panel, native 266px",
+    "variants": [
+      {
+        "width": 266,
+        "height": 266,
+        "files": [
+          "e8-in64-5.png",
+          "e8-in64-5.webp",
+          "e8-in64-5.avif"
+        ]
+      }
+    ]
+  }
+]
