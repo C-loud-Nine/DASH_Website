@@ -2,7 +2,7 @@
 
 Project page for **DASH: Dual-Branch Score Distillation for Guidance-Calibrated Compact Diffusion Models** (WACV 2027, Algorithms Track).
 
-Live URL (once deployed): https://c-loud-nine.github.io/DASH/
+Live URL (once deployed): https://c-loud-nine.github.io/DASH_Website/
 
 The site is plain static HTML, CSS and JS in `docs/`. There is no build step.
 
@@ -23,7 +23,7 @@ tools/                   figure extraction, video encoding, QA scripts
 
 ## Deploy on GitHub Pages
 
-1. Push this folder to `github.com/C-loud-Nine/DASH`.
+1. Push this folder to `github.com/C-loud-Nine/DASH_Website`.
 2. In the repo, open **Settings → Pages**, set **Source: Deploy from a branch**, branch `main`, folder `/docs`.
 3. `docs/.nojekyll` is already present, so files are served as-is.
 
